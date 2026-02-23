@@ -1,6 +1,6 @@
 """Database operations for learners."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -21,7 +21,11 @@ async def read_learners(
 
 async def create_learner(session: AsyncSession, name: str, email: str) -> Learner:
     """Create a new learner in the database."""
-    learner = Learner(name=name, email=email)
+    learner = Learner(
+        name=name,
+        email=email,
+        enrolled_at=datetime.utcnow(),
+    )
     session.add(learner)
     await session.commit()
     await session.refresh(learner)
